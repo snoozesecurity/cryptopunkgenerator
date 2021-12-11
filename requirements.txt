@@ -1,0 +1,4 @@
+Pillow>=8.4.0
+numpy>=1.19.5
+google-cloud-storage>=1.37.0
+requests>=2.22.0
