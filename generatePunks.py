@@ -94,8 +94,8 @@ def generateAlien():
 		punkStack.paste(glassesChoice, (0, 0), glassesChoice)
 	hasMask = np.random.choice([True, False], p=[0.02, 0.98])
 	if hasMask:
-		mask = Image.open(f"attributes/{mask}")
-		punkStack.paste(mask, (0, 0), mask)
+			maleMask = Image.open(f"attributes/{mask}")
+			punkStack.paste(maleMask, (0, 0), maleMask)
 	elif not hasMask:
 		hasSmoke = np.random.choice([True, False], p=[0.35, 0.65])
 		if hasSmoke:
