@@ -85,12 +85,11 @@ def generatePunk(punkType):
 			neckChoice = Image.open(np.random.choice(neckAttrs, p=list(attrDict['neck'].values())))
 			punkStack.paste(neckChoice, (0, 0), neckChoice)
 			attributeCount += 1
-	if attributeCount > 6:
-		print(f"Creating {punkType} with {attributeCount} attributes")
+	print(f"Creating {punkType} with {attributeCount} attributes")
 	return punkStack
 
 # While loop for total number of punks to be generated
-while punksCreated < 10000:
+while punksCreated < 100:
 
 	# Select punk and start stacking randomly chosen layers using the appropriate function
 	output = generatePunk(np.random.choice(punkTypes, p=[0.5, 0.3, 0.05, 0.06, 0.09]))
