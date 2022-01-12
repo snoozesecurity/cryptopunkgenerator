@@ -12,7 +12,6 @@ fileHashes = []
 # Male = punks[0:4], Female = punks[4:8], Alien = punks[8], Ape = punks[9], Zombie = punks[10]
 punks = ['punk01.png', 'punk02.png', 'punk03.png', 'punk04.png', 'punk05.png', 'punk06.png', 'punk07.png', 'punk08.png', 'punk09.png', 'punk10.png', 'punk11.png']
 punkTypes = ['male', 'female', 'alien', 'ape', 'zombie']
-
 backgrounds = ['bg01.png', 'bg02.png', 'bg03.png']
 smokes = ['smoke01.png', 'smoke02.png', 'smoke03.png']
 
@@ -34,13 +33,6 @@ def generatePunk(punkType):
 		attrDict = prob.zombieAttr
 		punkStack = Image.open(f"punks/{punks[10]}")
 
-	# Currently head/facialhair/eyes/mouth attributes work for all punk types.
-	# Time to add next attribute; check with
-	# print(sum(list(attrDict['ATTRIBUTETYPE'].values())))
-	# To ensure probability = 1
-
-	# FIX: robber mask needs to cover ear
-	# Mouth modifiers probably shouldn't work if punk has facial hair?
 	attributeCount = 0
 	basedir = f"attributes/{punkType}/"
 	hasHeadAttr = np.random.choice([True, False], p=[0.7, 0.3])
