@@ -1,5 +1,8 @@
 # cryptopunkgenerator
 ### Generate CryptoPunk-style avatars
+
+![Sample!](images/sample.jpg?raw=true "Sample!")
+
 #### Usage: 
 
 pip3 install -r requirements.txt
