@@ -1,8 +1,10 @@
 from PIL import Image
 import numpy as np
-import hashlib, os, random
+import hashlib, json, os, random
 import probability as prob
 
+# Keep track of punk metadata
+allmetadata = []
 # Keep track of punks created
 punksCreated = 0
 # Keep track of filehashes
@@ -16,22 +18,29 @@ backgrounds = ['bg01.png', 'bg02.png', 'bg03.png']
 smokes = ['smoke01.png', 'smoke02.png', 'smoke03.png']
 
 def generatePunk(punkType):
+	# Metadata dictionary to keep track of attributes
+	metadata = {}
 	# This can probably be shortened using dynamic variable names or similar
 	if punkType == 'male':
 		attrDict = prob.maleAttr
 		punkStack = Image.open(f"punks/{random.choice(punks[0:4])}")
+		metadata['Punk Type'] = 'Male'
 	elif punkType == 'female':
 		attrDict = prob.femaleAttr
 		punkStack = Image.open(f"punks/{random.choice(punks[4:8])}")
+		metadata['Punk Type'] = 'Female'
 	elif punkType == 'alien':
 		attrDict = prob.alienAttr
 		punkStack = Image.open(f"punks/{punks[8]}")
+		metadata['Punk Type'] = 'Alien'
 	elif punkType == 'ape':
 		attrDict = prob.apeAttr
 		punkStack = Image.open(f"punks/{punks[9]}")
+		metadata['Punk Type'] = 'Ape'
 	elif punkType == 'zombie':
 		attrDict = prob.zombieAttr
 		punkStack = Image.open(f"punks/{punks[10]}")
+		metadata['Punk Type'] = 'Zombie'
 
 	attributeCount = 0
 	basedir = f"attributes/{punkType}/"
@@ -41,6 +50,7 @@ def generatePunk(punkType):
 		headChoice = Image.open(np.random.choice(headAttrs, p=list(attrDict['head'].values())))
 		punkStack.paste(headChoice, (0, 0), headChoice)
 		attributeCount += 1
+		metadata['Head Attribute'] = str(headChoice.filename.split("/")[-1])
 	if punkType == 'male' or punkType == 'zombie':
 		hasFacialHair = np.random.choice([True, False], p=[0.3, 0.7])
 		if hasFacialHair:
@@ -48,6 +58,7 @@ def generatePunk(punkType):
 			facialHairChoice = Image.open(np.random.choice(facialHairAttrs, p=list(attrDict['facialhair'].values())))
 			punkStack.paste(facialHairChoice, (0, 0), facialHairChoice)
 			attributeCount += 1
+			metadata['Facial Hair'] = str(facialHairChoice.filename.split("/")[-1])
 	hasGlasses = np.random.choice([True, False], p=[0.7, 0.3])
 	if hasGlasses:
 		glassesAttrs = [f"{basedir}eyes/{item[0]}" for item in attrDict['eyes'].items()]
@@ -55,6 +66,7 @@ def generatePunk(punkType):
 			glassesChoice = Image.open(np.random.choice(glassesAttrs, p=list(attrDict['eyes'].values())))
 			punkStack.paste(glassesChoice, (0, 0), glassesChoice)
 			attributeCount += 1
+			metadata['Glasses'] = str(glassesChoice.filename.split("/")[-1])
 	hasMouthModifier = np.random.choice([True, False], p=[0.6, 0.4])
 	if hasMouthModifier:
 		mouthAttrs = [f"{basedir}mouth/{item[0]}" for item in attrDict['mouth'].items()]
@@ -62,6 +74,7 @@ def generatePunk(punkType):
 			mouthChoice = Image.open(np.random.choice(mouthAttrs, p=list(attrDict['mouth'].values())))
 			punkStack.paste(mouthChoice, (0, 0), mouthChoice)
 			attributeCount += 1
+			metadata['Mouth Modifier'] = str(mouthChoice.filename.split("/")[-1])
 	hasMask = np.random.choice([True, False], p=[0.025, 0.975])
 	if not hasMask:
 		hasSmoke = np.random.choice([True, False], p=[.25, .75])
@@ -69,15 +82,18 @@ def generatePunk(punkType):
 			smokeChoice = Image.open(f"attributes/uni/smoke/{np.random.choice(smokes, p=[0.33, 0.33, 0.34])}")
 			punkStack.paste(smokeChoice, (0, 0), smokeChoice)
 			attributeCount += 1
+			metadata['Smoking'] = str(smokeChoice.filename.split("/")[-1])
 	if hasMask and punkType != 'ape':
 		maskChoice = Image.open(f"{basedir}mask/mask01.png")
 		punkStack.paste(maskChoice, (0, 0), maskChoice)
 		attributeCount += 1
+		metadata['Wearing Mask'] = str(maskChoice.filename.split("/")[-1])
 	hasEarring = np.random.choice([True, False], p=[0.15, 0.85])
 	if hasEarring:
 		earringChoice = Image.open(f"{basedir}earring/earring01.png")
 		punkStack.paste(earringChoice, (0, 0), earringChoice)
 		attributeCount += 1
+		metadata['Earrings'] = str(earringChoice.filename.split("/")[-1])
 	hasNecklace = np.random.choice([True, False], p=[0.2, 0.8])
 	if hasNecklace:
 		neckAttrs = [f"{basedir}neck/{item[0]}" for item in attrDict['neck'].items()]
@@ -85,7 +101,10 @@ def generatePunk(punkType):
 			neckChoice = Image.open(np.random.choice(neckAttrs, p=list(attrDict['neck'].values())))
 			punkStack.paste(neckChoice, (0, 0), neckChoice)
 			attributeCount += 1
+			metadata['Neck Modifier'] = str(neckChoice.filename.split("/")[-1])
+	metadata['Total Attributes'] = attributeCount
 	print(f"Creating {punkType} with {attributeCount} attributes")
+	allmetadata.append(metadata)
 	return punkStack
 
 # While loop for total number of punks to be generated
@@ -103,3 +122,6 @@ while punksCreated < 100:
 		punkBg.save(f"generated/FakePunk_{punksCreated}.png")
 		print(f"Wrote file FakePunk_{punksCreated}.png ({hashDigest})")
 		punksCreated += 1
+
+with open(f"generated/metadata.json", "w") as outFile:
+	json.dump(allmetadata, outFile) 
